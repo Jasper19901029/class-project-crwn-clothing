@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+# /結尾是把該目錄的檔案皆忽略
 picture/
 
 # testing
