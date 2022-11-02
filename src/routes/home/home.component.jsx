@@ -1,4 +1,5 @@
 import Directory from "../../components/directory/directory.component";
+
 const Home = () => {
   const categories = [
     {
@@ -28,7 +29,11 @@ const Home = () => {
     },
   ];
 
-  return <Directory categories={categories} />;
+  return (
+    <div>
+      <Directory categories={categories} />;
+    </div>
+  );
 };
 
 export default Home;
