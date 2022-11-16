@@ -29,17 +29,22 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 
 // 實例一個新的Google帳號登入驗證
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
 // Google登入驗證設定, 選擇一個帳號(單純google登入的介面要求)
-provider.setCustomParameters({
+googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
 // 身份驗證
 export const auth = getAuth();
 
-export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const signInWithGooglePopup = () =>
+  signInWithPopup(auth, googleProvider);
+
+// signInWithRedirect會重新開啟一個頁面，登入後會重新mount整個web app
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, googleProvider);
 
 // 指向firestore資料庫
 export const db = getFirestore();
@@ -54,8 +59,26 @@ export const createUserDocumentFromAuth = async (userAuth) => {
   const userDocRef = doc(db, "users", userAuth.uid);
   console.log(userDocRef);
 
-  // 讀取firestore資料 網址:https://firebase.google.com/docs/reference/js/firestore_#getdoc
-  // getDoc(檔案的位置)
+  // 讀取firestore資料,doc網址:https://firebase.google.com/docs/reference/js/firestore_#getdoc
+  // getDoc(檔案的位置reference)
   const userSnapshot = await getDoc(userDocRef);
   console.log(userSnapshot, userSnapshot.exists());
+
+  // 如果不存在,則會新增一個新的user
+  if (!userSnapshot.exists()) {
+    const { displayName, email } = userAuth;
+    const createdAt = new Date();
+
+    try {
+      await setDoc(userDocRef, {
+        displayName,
+        email,
+        createdAt,
+      });
+    } catch (error) {
+      console.log("error creating the user", error.message);
+    }
+  }
+
+  return userDocRef;
 };
