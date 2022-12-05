@@ -10,6 +10,7 @@ import {
   signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
@@ -39,17 +40,23 @@ googleProvider.setCustomParameters({
 // 身份驗證
 export const auth = getAuth();
 
+// 跳出新視窗登入
 export const signInWithGooglePopup = () =>
   signInWithPopup(auth, googleProvider);
 
-// signInWithRedirect會重新開啟一個頁面，登入後會重新mount整個web app
+// signInWithRedirect重新導向新頁面，登入後會重新mount整個web app
 export const signInWithGoogleRedirect = () =>
   signInWithRedirect(auth, googleProvider);
 
 // 指向firestore資料庫
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth) => {
+// 登入後確認是否已經有存在的使用者,如果沒有則新增在firestore
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalInformation = {}
+) => {
+  if (!userAuth) return;
   /** doc(first, second, third)中的paramert
    * first: 實例的database
    * second: database中的collection
@@ -74,6 +81,7 @@ export const createUserDocumentFromAuth = async (userAuth) => {
         displayName,
         email,
         createdAt,
+        ...additionalInformation,
       });
     } catch (error) {
       console.log("error creating the user", error.message);
@@ -81,4 +89,13 @@ export const createUserDocumentFromAuth = async (userAuth) => {
   }
 
   return userDocRef;
+};
+
+export const createAuthWithUserWithEmailAndPassword = async (
+  email,
+  password
+) => {
+  if (!email || !password) return;
+
+  return await createUserWithEmailAndPassword(auth, email, password);
 };

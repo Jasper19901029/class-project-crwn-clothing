@@ -9,6 +9,8 @@ import {
   createUserDocumentFromAuth,
 } from "../../utils/firebase/firebase.utils";
 
+import SignUpForm from "../../components/sign-up-form/sign-up-form.component";
+
 const SignIn = () => {
   /* 練習用重新導向到新的頁面登入
   * 在useEffect中,async function要在useEffect中建立一個新的function再重新呼叫
@@ -41,6 +43,8 @@ const SignIn = () => {
       {/*練習用 <button onClick={signInWithGoogleRedirect}>
         Sign in with signInWithGoogleRedirect
       </button> */}
+
+      <SignUpForm />
     </div>
   );
 };
