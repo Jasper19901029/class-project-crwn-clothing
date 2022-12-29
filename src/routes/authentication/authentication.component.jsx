@@ -2,16 +2,19 @@
 // import { useEffect } from "react";
 // import { getRedirectResult } from "firebase/auth";
 
-import {
-  // auth,
-  signInWithGooglePopup,
-  // signInWithGoogleRedirect,
-  createUserDocumentFromAuth,
-} from "../../utils/firebase/firebase.utils";
+//移到sign-in-form.component.jsx
+// import {
+//   // auth,
+//   signInWithGooglePopup,
+//   // signInWithGoogleRedirect,
+//   createUserDocumentFromAuth,
+// } from "../../utils/firebase/firebase.utils";
 
 import SignUpForm from "../../components/sign-up-form/sign-up-form.component";
+import SignInForm from "../../components/sign-in-form/sign-in-form.component";
+import "./authentication.styles.scss";
 
-const SignIn = () => {
+const Authentication = () => {
   /* 練習用重新導向到新的頁面登入
   * 在useEffect中,async function要在useEffect中建立一個新的function再重新呼叫
   useEffect(() => {
@@ -26,27 +29,24 @@ const SignIn = () => {
   }, []);
 */
   // 跟資料庫連接時都要用async function
-  const logGoogelUser = async () => {
-    // 解構user
-    const { user } = await signInWithGooglePopup();
-    console.log(user);
-    // 將user資料帶入
-    const userDocRef = await createUserDocumentFromAuth(user);
-  };
+  //移到sign-in-form.component.jsx
+  // const logGoogelUser = async () => {
+  //   // 解構user
+  //   const { user } = await signInWithGooglePopup();
+  //   console.log(user);
+  //   // 將user資料帶入
+  //   const userDocRef = await createUserDocumentFromAuth(user);
+  // };
 
   return (
-    <div>
-      <h1>Sign In page</h1>
-      <button onClick={logGoogelUser}>
-        Sign in with signInWithGooglePopup
-      </button>
+    <div className="authentication-container">
       {/*練習用 <button onClick={signInWithGoogleRedirect}>
         Sign in with signInWithGoogleRedirect
       </button> */}
-
+      <SignInForm />
       <SignUpForm />
     </div>
   );
 };
 
-export default SignIn;
+export default Authentication;

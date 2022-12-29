@@ -11,6 +11,9 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
@@ -35,6 +38,7 @@ const googleProvider = new GoogleAuthProvider();
 // Google登入驗證設定, 選擇一個帳號(單純google登入的介面要求)
 googleProvider.setCustomParameters({
   prompt: "select_account",
+  // 'login_hint': 'user@example.com'
 });
 
 // 身份驗證
@@ -91,11 +95,19 @@ export const createUserDocumentFromAuth = async (
   return userDocRef;
 };
 
-export const createAuthWithUserWithEmailAndPassword = async (
-  email,
-  password
-) => {
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
 
   return await createUserWithEmailAndPassword(auth, email, password);
 };
+
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+
+  return await signInWithEmailAndPassword(auth, email, password);
+};
+
+export const signOutUser = async () => await signOut(auth);
+
+export const onAuthStateChangedListener = (callback) =>
+  onAuthStateChanged(auth, callback);
