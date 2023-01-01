@@ -16,7 +16,16 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+} from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // firebase的設定,這邊使用的apiKey是公鑰,所以公開在客戶端沒關係,但要記得在firebase中的設定要注意,才不會被別人使用
@@ -55,6 +64,39 @@ export const signInWithGoogleRedirect = () =>
 // 指向firestore資料庫
 export const db = getFirestore();
 
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = collection(db, collectionKey);
+  // writeBatch: 批量處理
+  const batch = writeBatch(db);
+
+  objectsToAdd.forEach((object) => {
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    batch.set(docRef, object);
+  });
+
+  // 開始處理
+  await batch.commit();
+  console.log("done");
+};
+
+export const getCollectionAndDocuments = async () => {
+  const collectionRef = collection(db, "categories");
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+
+  return categoryMap;
+};
+
 // 登入後確認是否已經有存在的使用者,如果沒有則新增在firestore
 export const createUserDocumentFromAuth = async (
   userAuth,
@@ -68,7 +110,6 @@ export const createUserDocumentFromAuth = async (
    * 雖然目前firestore中沒有這些資料,但還是會生成
    */
   const userDocRef = doc(db, "users", userAuth.uid);
-  console.log(userDocRef);
 
   // 讀取firestore資料,doc網址:https://firebase.google.com/docs/reference/js/firestore_#getdoc
   // getDoc(檔案的位置reference)
